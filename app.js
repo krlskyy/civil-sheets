@@ -33,12 +33,6 @@ let state = {
 // Утилиты
 // ============================================================
 
-async function sha256Hex(text) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-}
-window.sha256Hex = sha256Hex; // доступно из консоли для генерации хэша пароля
-
 function genId(prefix) {
   return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
@@ -76,10 +70,9 @@ const lockPassword = document.getElementById("lock-password");
 const lockError = document.getElementById("lock-error");
 const appRoot = document.getElementById("app");
 
-lockForm.addEventListener("submit", async (e) => {
+lockForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const hash = await sha256Hex(lockPassword.value);
-  if (hash === CFG.PASSWORD_HASH) {
+  if (lockPassword.value === CFG.PASSWORD) {
     sessionStorage.setItem("tables_unlocked", "1");
     unlockApp();
   } else {
